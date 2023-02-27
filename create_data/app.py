@@ -1,5 +1,6 @@
 import random, json, os, requests
 from collections import defaultdict
+from schedule import every, repeat, run_pending
 
 class generate_data():
 
@@ -20,13 +21,13 @@ class generate_data():
         for id in range(self.start, self.stop):
             for key in self.var:
                 if key == 'poids':
-                    self.data[id][key] = random.randrange(40,120,2)
+                    self.data[id][key] = round(random.uniform(40,120), 2)
                 if key == 'age':
                     self.data[id][key] = random.randrange(18,85,1)
                 if key == 'sexe':
                     self.data[id][key] = str(random.choice(['F', 'M']))
                 if key == 'taille':
-                    self.data[id][key] = random.randrange(130,205,5)
+                    self.data[id][key] = round(random.uniform(150,205), 2)
                 if key == 'ant_famille':
                     self.data[id][key] = str(random.choices(['O','N'], weights=[30,70])[0])
                 if key == 'Maladie':
@@ -71,13 +72,17 @@ class generate_data():
             requests.post('http://server:8000/uploadfile/', files={'file':f})
 
 
-
-
-if __name__ == '__main__':
+@repeat(every().minutes)
+def main():
     data = generate_data()
     data.random_data()
     data.seed_file()
     data.send_api()
+
+if __name__ == '__main__':
+    while(True):
+        run_pending()
+
 
 
     
