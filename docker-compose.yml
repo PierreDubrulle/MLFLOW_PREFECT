@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+
+  data_creation:
+    build: 
+      context: ./create_data
+      dockerfile: Dockerfile
+    volumes:
+      - data:/data
+
+  server:
+    build: 
+      context: ./server
+      dockerfile: Dockerfile
+    ports:
+    - "8000:8000"
+    depends_on:
+      - data_creation
+    volumes:
+      - data:/data
+  
+
+
+
+volumes:
+  data:
+    driver: local
+    
